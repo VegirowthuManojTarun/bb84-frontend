@@ -18,6 +18,8 @@ import { ResultsCard } from "./ResultsCard";
 import { ThemeToggle } from "./ThemeToggle";
 import { BB84Api, handleApiError } from "@/services/bb84Api";
 import { useToast } from "@/hooks/use-toast";
+import QubitVisualizer from "./QubitVisualizer";
+import MultiQubitVisualizer from "./MultiQubitVisualizer";
 
 const generateRandomBit = (): Bit => (Math.random() < 0.5 ? 0 : 1);
 const generateRandomBasis = (): Basis => (Math.random() < 0.5 ? "+" : "x");
@@ -313,7 +315,7 @@ export const BB84Simulator = () => {
       <div className="absolute top-6 right-6 z-10">
         <ThemeToggle />
       </div>
-      
+
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
@@ -383,7 +385,17 @@ export const BB84Simulator = () => {
             isActive={state.step === "measuring"}
           />
         </div>
-
+        <MultiQubitVisualizer
+          index={state.currentRound - 1}
+          totalRounds={state.totalRounds}
+        />
+        {/* 🔬 Qubit Visualizer */}
+        {/* {state.step !== "idle" && state.currentRound > 0 && (
+          <QubitVisualizer
+            index={state.currentRound - 1}
+            totalRounds={state.totalRounds}
+          />
+        )} */}
         {/* Control Panel */}
         <ControlPanel
           state={state}

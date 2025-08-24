@@ -42,6 +42,13 @@ export interface BobMeasureResponse {
   };
 }
 
+// ---------------------------
+// NEW: Visualization Responses
+// ---------------------------
+export interface VisualizationResponse {
+  img_base64: string;
+}
+
 export class BB84Api {
   static async reset(): Promise<void> {
     await api.post("/reset");
@@ -71,6 +78,34 @@ export class BB84Api {
     const response = await api.get("/final-key");
     return response.data;
   }
+
+  // NEW: Fetch circuit diagram as base64 image
+  static async getCircuit(index: number): Promise<VisualizationResponse> {
+    const response = await api.get(`/visualize/circuit/${index}`);
+    return response.data;
+  }
+
+  // NEW: Fetch Bloch sphere as base64 image
+  static async getBloch(index: number): Promise<VisualizationResponse> {
+    const response = await api.get(`/visualize/bloch/${index}`);
+    return response.data;
+  }
+  static async getQubitVisualization(
+    who: "alice" | "eve" | "bob",
+    index: number
+  ): Promise<{
+      error: any; circuit: string; bloch: string 
+}> {
+    const response = await api.get(`/visualize/${who}/${index}`);
+    return response.data;
+  }
+
+  // static async getQubitVisualization(
+  //   index: number
+  // ): Promise<{ circuit: string; bloch: string }> {
+  //   const response = await api.get(`/visualize/${index}`);
+  //   return response.data;
+  // }
 
   // Health check method
   static async healthCheck(): Promise<boolean> {
