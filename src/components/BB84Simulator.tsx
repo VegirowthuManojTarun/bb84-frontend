@@ -15,6 +15,7 @@ import { EvePanel } from "./EvePanel";
 import { ControlPanel } from "./ControlPanel";
 import { ChatLog } from "./ChatLog";
 import { ResultsCard } from "./ResultsCard";
+import { ThemeToggle } from "./ThemeToggle";
 import { BB84Api, handleApiError } from "@/services/bb84Api";
 import { useToast } from "@/hooks/use-toast";
 
@@ -307,7 +308,12 @@ export const BB84Simulator = () => {
   }, [state.mode, state.totalRounds, state.speed, addMessage]);
 
   return (
-    <div className="min-h-screen p-4">
+    <div className="min-h-screen p-4 relative">
+      {/* Theme Toggle */}
+      <div className="absolute top-6 right-6 z-10">
+        <ThemeToggle />
+      </div>
+      
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
