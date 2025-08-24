@@ -1,14 +1,21 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import { HomeScreen } from "@/components/HomeScreen";
+import { BB84Simulator } from "@/components/BB84Simulator";
 
 const Index = () => {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
-  );
+  const [currentView, setCurrentView] = useState<"home" | "simulation">("home");
+  const [simulationMode, setSimulationMode] = useState<"without-eve" | "with-eve">("without-eve");
+
+  const handleStartSimulation = (mode: "without-eve" | "with-eve") => {
+    setSimulationMode(mode);
+    setCurrentView("simulation");
+  };
+
+  if (currentView === "home") {
+    return <HomeScreen onStartSimulation={handleStartSimulation} />;
+  }
+
+  return <BB84Simulator />;
 };
 
 export default Index;
