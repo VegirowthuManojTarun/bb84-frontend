@@ -25,11 +25,17 @@ import OverallCircuit from "./OverallCircuit";
 const generateRandomBit = (): Bit => (Math.random() < 0.5 ? 0 : 1);
 const generateRandomBasis = (): Basis => (Math.random() < 0.5 ? "+" : "x");
 
-export const BB84Simulator = () => {
+export const BB84Simulator = ({
+  mode,
+  onBack,
+}: {
+  mode: "without-eve" | "with-eve";
+  onBack: () => void;
+}) => {
   const { toast } = useToast();
 
   const [state, setState] = useState<ProtocolState>({
-    mode: "without-eve",
+    mode,
     step: "idle",
     currentRound: 0,
     totalRounds: 8,
@@ -313,6 +319,14 @@ export const BB84Simulator = () => {
   return (
     <div className="min-h-screen p-4 relative">
       {/* Theme Toggle */}
+      <div className="absolute top-6 left-6 z-10">
+        <button
+          onClick={onBack}
+          className="px-4 py-2 bg-muted hover:bg-muted/70 rounded-md text-sm font-medium"
+        >
+          ← Back
+        </button>
+      </div>
       <div className="absolute top-6 right-6 z-10">
         <ThemeToggle />
       </div>
@@ -394,13 +408,6 @@ export const BB84Simulator = () => {
           totalRounds={state.totalRounds}
         />
 
-        {/* 🔬 Qubit Visualizer */}
-        {/* {state.step !== "idle" && state.currentRound > 0 && (
-          <QubitVisualizer
-            index={state.currentRound - 1}
-            totalRounds={state.totalRounds}
-          />
-        )} */}
         {/* Control Panel */}
         <ControlPanel
           state={state}
