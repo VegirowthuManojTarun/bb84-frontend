@@ -98,6 +98,21 @@ export class BB84Api {
     return response.data;
   }
 
+  static async getOverallAliceCircuit(): Promise<{ img_base64: string }> {
+    const response = await api.get("/visualize/overall/alice");
+    return response.data;
+  }
+
+  static async getOverallEveCircuit(): Promise<{ img_base64: string }> {
+    const response = await api.get("/visualize/overall/eve");
+    return response.data;
+  }
+
+  static async getOverallBobCircuit(): Promise<{ img_base64: string }> {
+    const response = await api.get("/visualize/overall/bob");
+    return response.data;
+  }
+  
   static async getQubitVisualization(
     who: "alice" | "eve" | "bob",
     index: number
@@ -109,13 +124,6 @@ export class BB84Api {
     const response = await api.get(`/visualize/${who}/${index}`);
     return response.data;
   }
-
-  // static async getQubitVisualization(
-  //   index: number
-  // ): Promise<{ circuit: string; bloch: string }> {
-  //   const response = await api.get(`/visualize/${index}`);
-  //   return response.data;
-  // }
 
   // Health check method
   static async healthCheck(): Promise<boolean> {

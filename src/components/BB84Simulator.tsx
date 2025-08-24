@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button"; // if you’re using shadcn/ui
 import {
   ProtocolState,
   ChatMessage,
@@ -48,7 +49,7 @@ export const BB84Simulator = ({
     errorRate: 0,
     speed: "normal",
   });
-
+  const [showCircuits, setShowCircuits] = useState(true);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [photons, setPhotons] = useState<PhotonData[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -395,18 +396,42 @@ export const BB84Simulator = ({
           <BobPanel
             bases={state.bobBases}
             measurements={state.bobMeasurements}
-            aliceBases={state.aliceData.map((q) => q.basis)}
+            aliceBases={
+              state.step === "comparing" || state.step === "complete"
+                ? state.aliceData.map((q) => q.basis)
+                : new Array(state.totalRounds).fill(null)
+            } // ✅ Hide until compare step
             currentRound={state.currentRound}
             isActive={state.step === "measuring"}
           />
+          {/* <BobPanel
+            bases={state.bobBases}
+            measurements={state.bobMeasurements}
+            aliceBases={state.aliceData.map((q) => q.basis)}
+            currentRound={state.currentRound}
+            isActive={state.step === "measuring"}
+          /> */}
         </div>
         {state.step === "complete" && (
-          <OverallCircuit eve={state.mode === "with-eve"} />
+          <div className="my-4">
+            <Button
+              variant="outline"
+              onClick={() => setShowCircuits(!showCircuits)}
+              className="mb-4"
+            >
+              {showCircuits ? "Hide Circuits" : "Show Circuits"}
+            </Button>
+
+            {showCircuits && <OverallCircuit eve={state.mode === "with-eve"} />}
+          </div>
         )}
-        <MultiQubitVisualizer
+        {/* {state.step === "complete" && (
+          <OverallCircuit eve={state.mode === "with-eve"} />
+        )} */}
+        {/* <MultiQubitVisualizer
           index={state.currentRound - 1}
           totalRounds={state.totalRounds}
-        />
+        /> */}
 
         {/* Control Panel */}
         <ControlPanel
