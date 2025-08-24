@@ -90,12 +90,22 @@ export class BB84Api {
     const response = await api.get(`/visualize/bloch/${index}`);
     return response.data;
   }
+
+  static async getOverallCircuit(
+    eve: boolean = false
+  ): Promise<{ img_base64: string }> {
+    const response = await api.get(`/visualize/overall-circuit?eve=${eve}`);
+    return response.data;
+  }
+
   static async getQubitVisualization(
     who: "alice" | "eve" | "bob",
     index: number
   ): Promise<{
-      error: any; circuit: string; bloch: string 
-}> {
+    error: any;
+    circuit: string;
+    bloch: string;
+  }> {
     const response = await api.get(`/visualize/${who}/${index}`);
     return response.data;
   }
