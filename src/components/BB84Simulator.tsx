@@ -16,7 +16,7 @@ import { EvePanel } from "./EvePanel";
 import { ControlPanel } from "./ControlPanel";
 import { ChatLog } from "./ChatLog";
 import { ResultsCard } from "./ResultsCard";
-import { ThemeToggle } from "./ThemeToggle";
+import { Navbar } from "./Navbar";
 import { BB84Api, handleApiError } from "@/services/bb84Api";
 import { useToast } from "@/hooks/use-toast";
 import QubitVisualizer from "./QubitVisualizer";
@@ -318,21 +318,21 @@ export const BB84Simulator = ({
   }, [state.mode, state.totalRounds, state.speed, addMessage]);
 
   return (
-    <div className="min-h-screen p-4 relative">
-      {/* Theme Toggle */}
-      <div className="absolute top-6 left-6 z-10">
-        <button
-          onClick={onBack}
-          className="px-4 py-2 bg-muted hover:bg-muted/70 rounded-md text-sm font-medium"
-        >
-          ← Back
-        </button>
-      </div>
-      <div className="absolute top-6 right-6 z-10">
-        <ThemeToggle />
-      </div>
+    <div className="min-h-screen">
+      <Navbar />
+      
+      <div className="pt-20 p-4">
+        {/* Back Button */}
+        <div className="max-w-7xl mx-auto mb-6">
+          <button
+            onClick={onBack}
+            className="px-4 py-2 bg-muted hover:bg-muted/70 rounded-md text-sm font-medium transition-colors"
+          >
+            ← Back to Home
+          </button>
+        </div>
 
-      <div className="max-w-7xl mx-auto space-y-6">
+        <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
           <motion.h1
@@ -465,6 +465,7 @@ export const BB84Simulator = ({
             totalBits={state.totalRounds}
             errorHistory={errorHistory}
           />
+        </div>
         </div>
       </div>
     </div>
