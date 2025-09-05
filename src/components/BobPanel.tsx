@@ -44,7 +44,7 @@ export const BobPanel = ({
 
       <CardContent className="space-y-4">
         <div className="text-sm text-muted-foreground">
-          Measurement Bases & Results
+          Quantum Measurement
         </div>
 
         {/* Manual basis selection for current round */}
@@ -74,72 +74,52 @@ export const BobPanel = ({
           </div>
         )}
 
-        <div className="grid grid-cols-4 gap-2">
-          {Array.from({ length: Math.max(bases.length, 8) }).map((_, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{
-                opacity: index <= currentRound ? 1 : 0, // only show up to currentRound
-                scale: index === currentRound ? 1.1 : 1,
-                borderColor:
-                  index === currentRound && isActive
-                    ? "hsl(var(--bob))"
-                    : "transparent",
-              }}
-              transition={{
-                delay: index * 0.05,
-                duration: 0.3,
-                type: "spring",
-                stiffness: 300,
-              }}
-              className={`relative aspect-square border-2 rounded-lg p-2 text-center transition-colors
-        ${
-          index <= currentRound
-            ? aliceBases[index] // only check match after reveal
-              ? basesMatch(index)
-                ? "bg-green-200 border-green-500"
-                : "bg-red-200 border-red-500"
-              : "bg-muted/20 border-border"
-            : "bg-transparent border-transparent" // not yet revealed
-        }
-      `}
-            >
-              {/* Only render contents up to the current round */}
-              {index <= currentRound && bases[index] && (
-                <>
-                  {/* Basis symbol */}
-                  <div
-                    className={`text-lg font-mono ${
-                      bases[index] === "+" ? "basis-plus" : "basis-cross"
-                    }`}
-                  />
-
-                  {/* Show measured result only if exists */}
-                  {measurements[index] !== null && (
-                    <div className="text-xs font-mono mt-1">
-                      Measured: {measurements[index]}
-                    </div>
-                  )}
-                </>
+        {/* Current measurement info */}
+        {bases.length > 0 && currentRound < bases.length && (
+          <div className="p-3 bg-bob/5 border border-bob/20 rounded-lg">
+            <div className="text-sm font-medium text-bob mb-2">
+              Current Measurement (Round {currentRound + 1})
+            </div>
+            <div className="space-y-2 text-sm">
+              <div>Chosen Basis: <span className="font-mono">
+                {bases[currentRound]} ({bases[currentRound] === "+" ? "Rectilinear" : "Diagonal"})
+              </span></div>
+              {measurements[currentRound] !== null && (
+                <div>Measured Bit: <span className="font-mono">{measurements[currentRound]}</span></div>
               )}
-
-              {/* Current round indicator */}
-              {index === currentRound && isActive && (
-                <motion.div
-                  className="absolute -inset-1 border-2 border-bob rounded-lg"
-                  animate={{ scale: [1, 1.05, 1] }}
-                  transition={{ duration: 1, repeat: Infinity }}
-                />
+              {aliceBases[currentRound] && (
+                <div className={`font-medium ${
+                  basesMatch(currentRound) ? "text-green-600" : "text-red-600"
+                }`}>
+                  {basesMatch(currentRound) ? "✓ Basis Match" : "✗ Basis Mismatch"}
+                </div>
               )}
-            </motion.div>
-          ))}
+            </div>
+          </div>
+        )}
+
+        {/* Progress indicator */}
+        <div className="space-y-2">
+          <div className="text-sm text-muted-foreground">
+            Measured: {measurements.filter(m => m !== null).length}/{bases.length} photons
+          </div>
+          <div className="w-full bg-muted/20 rounded-full h-2">
+            <motion.div 
+              className="bg-bob h-full rounded-full"
+              initial={{ width: "0%" }}
+              animate={{ 
+                width: `${(measurements.filter(m => m !== null).length / Math.max(bases.length, 1)) * 100}%` 
+              }}
+              transition={{ duration: 0.5 }}
+            />
+          </div>
         </div>
 
         {bases.length > 0 && (
           <div className="text-xs text-muted-foreground space-y-1">
-            <div>Green ✓ = Basis match, Red ✗ = Basis mismatch</div>
-            <div>Only matching bases contribute to the key</div>
+            <div>Polarizer filters incoming photons</div>
+            <div>Correct basis → reliable measurement</div>
+            <div>Wrong basis → random result</div>
           </div>
         )}
       </CardContent>

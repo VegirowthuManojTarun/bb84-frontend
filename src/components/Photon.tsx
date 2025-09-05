@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { PhotonData } from "@/types/bb84";
 import { cn } from "@/lib/utils";
+import { ArrowUp, ArrowRight, ArrowUpRight, ArrowDownRight } from "lucide-react";
 
 interface PhotonProps {
   photon: PhotonData;
@@ -17,25 +18,55 @@ const SPEED_MAP = {
 export const Photon = ({ photon, onAnimationComplete, speed }: PhotonProps) => {
   const { bit, basis } = photon;
   
-  // Get photon shape based on basis
-  const getPhotonShape = () => {
+  // Get arrow component and color based on bit and basis
+  const getPhotonArrow = () => {
+    let ArrowComponent;
+    let colorClass;
+    let glowColor;
+
+    // Determine arrow direction based on bit and basis
     if (basis === "+") {
-      // Circle for + basis
-      return (
-        <div className={cn(
-          "w-3 h-3 rounded-full shadow-lg",
-          bit === 0 ? "bg-blue-400" : "bg-yellow-400"
-        )} />
-      );
+      if (bit === 0) {
+        ArrowComponent = ArrowUp; // ↑ vertical
+        colorClass = "text-alice";
+        glowColor = "hsl(var(--alice))";
+      } else {
+        ArrowComponent = ArrowRight; // → horizontal  
+        colorClass = "text-warning";
+        glowColor = "hsl(var(--warning))";
+      }
     } else {
-      // Diamond for x basis
-      return (
-        <div className={cn(
-          "w-3 h-3 shadow-lg transform rotate-45",
-          bit === 0 ? "bg-red-400" : "bg-green-400"
-        )} />
-      );
+      if (bit === 0) {
+        ArrowComponent = ArrowUpRight; // ↗ 45°
+        colorClass = "text-destructive";
+        glowColor = "hsl(var(--destructive))";
+      } else {
+        ArrowComponent = ArrowDownRight; // ↘ 135°
+        colorClass = "text-success";
+        glowColor = "hsl(var(--success))";
+      }
     }
+
+    return (
+      <motion.div
+        className={cn("relative", colorClass)}
+        animate={{ 
+          rotate: photon.isIntercepted ? [0, 15, -15, 0] : 0,
+          filter: photon.isIntercepted 
+            ? [`drop-shadow(0 0 8px ${glowColor})`, `drop-shadow(0 0 12px hsl(var(--eve)))`, `drop-shadow(0 0 8px ${glowColor})`]
+            : `drop-shadow(0 0 6px ${glowColor})`
+        }}
+        transition={{ 
+          rotate: photon.isIntercepted ? { duration: 0.3, repeat: 2 } : {},
+          filter: { duration: 0.2 }
+        }}
+      >
+        <ArrowComponent 
+          className="w-4 h-4" 
+          strokeWidth={2.5}
+        />
+      </motion.div>
+    );
   };
 
   return (
@@ -73,15 +104,36 @@ export const Photon = ({ photon, onAnimationComplete, speed }: PhotonProps) => {
         right: 0
       }}
     >
-      {getPhotonShape()}
-      {/* Photon tail effect */}
+      {getPhotonArrow()}
+      
+      {/* Quantum shimmer trail effect */}
       <motion.div
-        className={cn(
-          "absolute inset-0 w-8 h-1 -left-6 top-1/2 -translate-y-1/2 opacity-50 blur-sm rounded-full",
-          basis === "+" ? (bit === 0 ? "bg-blue-400" : "bg-yellow-400") : (bit === 0 ? "bg-red-400" : "bg-green-400")
-        )}
-        animate={{ scaleX: [0.5, 1, 0.5] }}
+        className="absolute inset-0 w-8 h-1 -left-6 top-1/2 -translate-y-1/2 opacity-40 blur-sm rounded-full"
+        style={{
+          background: `linear-gradient(90deg, transparent, ${
+            basis === "+" 
+              ? (bit === 0 ? "hsl(var(--alice))" : "hsl(var(--warning))") 
+              : (bit === 0 ? "hsl(var(--destructive))" : "hsl(var(--success))")
+          }40, transparent)`
+        }}
+        animate={{ 
+          scaleX: [0.5, 1, 0.5],
+          opacity: [0.2, 0.6, 0.2] 
+        }}
         transition={{ duration: 0.8, repeat: Infinity }}
+      />
+      
+      {/* Quantum glow effect */}
+      <motion.div
+        className="absolute inset-0 -m-1 rounded-full pointer-events-none"
+        animate={{
+          boxShadow: [
+            "0 0 4px currentColor20",
+            "0 0 8px currentColor40", 
+            "0 0 4px currentColor20"
+          ]
+        }}
+        transition={{ duration: 1, repeat: Infinity }}
       />
     </motion.div>
   );
