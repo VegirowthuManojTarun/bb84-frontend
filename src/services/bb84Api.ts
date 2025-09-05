@@ -2,7 +2,7 @@ import axios from "axios";
 import { Basis, Bit } from "@/types/bb84";
 
 // Configure base URL for the FastAPI backend
-const API_BASE_URL = "http://localhost:8000"; // Update this to match your backend
+const API_BASE_URL = "https://bb-84-key-distribution.vercel.app"; // Production API endpoint
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -145,7 +145,7 @@ export const handleApiError = (error: any): string => {
       "Server error occurred"
     );
   } else if (error.request) {
-    return "Unable to connect to BB84 backend server. Please ensure it is running on port 8000.";
+    return "Unable to connect to BB84 backend server. Please check your internet connection and try again.";
   } else {
     return "An unexpected error occurred";
   }
