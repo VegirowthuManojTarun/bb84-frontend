@@ -2,7 +2,7 @@ import axios from "axios";
 import { Basis, Bit } from "@/types/bb84";
 
 // Configure base URL for the FastAPI backend
-const API_BASE_URL = "http://localhost:8000"; // Update this to match your backend
+const API_BASE_URL = "http://127.0.0.1:8000"; // Update this to match your backend
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -112,7 +112,7 @@ export class BB84Api {
     const response = await api.get("/visualize/overall/bob");
     return response.data;
   }
-  
+
   static async getQubitVisualization(
     who: "alice" | "eve" | "bob",
     index: number
