@@ -223,31 +223,6 @@ export const HomeScreen = ({ onStartSimulation }: HomeScreenProps) => {
               </div>
             </div>
           </motion.div>
-
-          {/* Story Mode Navigation */}
-          <motion.div 
-            className="text-center mt-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.0, duration: 0.8 }}
-          >
-            <Card className="p-6 bg-gradient-to-r from-primary/10 to-primary-glow/10 border-primary/20">
-              <div className="flex flex-col items-center gap-4">
-                <div className="text-4xl">🎬</div>
-                <h3 className="text-xl font-semibold text-foreground">Educational Story Mode</h3>
-                <p className="text-muted-foreground text-center max-w-md">
-                  Watch an animated walkthrough of the BB84 protocol with cartoon-style characters and step-by-step explanations.
-                </p>
-                <Button 
-                  onClick={() => window.location.href = '/story-mode'}
-                  className="gap-2"
-                >
-                  <span>🎭</span>
-                  Watch Story Animation
-                </Button>
-              </div>
-            </Card>
-          </motion.div>
         </div>
       </div>
       

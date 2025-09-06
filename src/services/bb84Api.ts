@@ -2,7 +2,8 @@ import axios from "axios";
 import { Basis, Bit } from "@/types/bb84";
 
 // Configure base URL for the FastAPI backend
-const API_BASE_URL = "http://127.0.0.1:8000"; // 
+const API_BASE_URL = "http://localhost:8000"; // Update this to match your backend
+
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,
@@ -111,7 +112,7 @@ export class BB84Api {
     const response = await api.get("/visualize/overall/bob");
     return response.data;
   }
-
+  
   static async getQubitVisualization(
     who: "alice" | "eve" | "bob",
     index: number
@@ -144,7 +145,7 @@ export const handleApiError = (error: any): string => {
       "Server error occurred"
     );
   } else if (error.request) {
-    return "Unable to connect to BB84 backend server. Please check your internet connection and try again.";
+    return "Unable to connect to BB84 backend server. Please ensure it is running on port 8000.";
   } else {
     return "An unexpected error occurred";
   }

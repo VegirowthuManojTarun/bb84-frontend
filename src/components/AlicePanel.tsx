@@ -25,52 +25,61 @@ export const AlicePanel = ({ qubits, currentRound, isActive }: AlicePanelProps) 
       
       <CardContent className="space-y-4">
         <div className="text-sm text-muted-foreground">
-          Quantum State Preparation
+          Quantum Bits & Bases
         </div>
         
-        {/* Current qubit info */}
-        {qubits.length > 0 && currentRound < qubits.length && (
-          <div className="p-3 bg-alice/5 border border-alice/20 rounded-lg">
-            <div className="text-sm font-medium text-alice mb-2">
-              Current Qubit (Round {currentRound + 1})
-            </div>
-            <div className="space-y-2 text-sm">
-              <div>Bit Value: <span className="font-mono">{qubits[currentRound]?.bit}</span></div>
-              <div>Basis: <span className="font-mono">
-                {qubits[currentRound]?.basis} ({qubits[currentRound]?.basis === "+" ? "Rectilinear" : "Diagonal"})
-              </span></div>
-              <div>Polarization: <span className="font-mono">
-                {qubits[currentRound]?.basis === "+" 
-                  ? (qubits[currentRound]?.bit === 0 ? "↑ Vertical" : "→ Horizontal")
-                  : (qubits[currentRound]?.bit === 0 ? "↗ 45°" : "↘ 135°")
-                }
-              </span></div>
-            </div>
-          </div>
-        )}
-        
-        {/* Progress indicator */}
-        <div className="space-y-2">
-          <div className="text-sm text-muted-foreground">
-            Progress: {Math.min(currentRound + (isActive ? 1 : 0), qubits.length)}/{qubits.length} qubits
-          </div>
-          <div className="w-full bg-muted/20 rounded-full h-2">
-            <motion.div 
-              className="bg-alice h-full rounded-full"
-              initial={{ width: "0%" }}
+        <div className="grid grid-cols-4 gap-2">
+          {qubits.map((qubit, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, scale: 0.8 }}
               animate={{ 
-                width: `${(Math.min(currentRound + (isActive ? 1 : 0), qubits.length) / Math.max(qubits.length, 1)) * 100}%` 
+                opacity: 1, 
+                scale: index === currentRound ? 1.1 : 1,
+                borderColor: index === currentRound && isActive ? "hsl(var(--alice))" : "transparent"
               }}
-              transition={{ duration: 0.5 }}
-            />
-          </div>
+              transition={{ 
+                delay: index * 0.05,
+                duration: 0.3,
+                type: "spring",
+                stiffness: 300
+              }}
+              className="relative aspect-square border-2 rounded-lg p-2 text-center transition-colors"
+            >
+              {/* Bit representation */}
+              <div className={`w-full h-6 rounded mb-1 ${
+                qubit.bit === 0 && qubit.basis === "+" ? "bg-alice/60" :
+                qubit.bit === 1 && qubit.basis === "+" ? "bg-warning/60" :
+                qubit.bit === 0 && qubit.basis === "x" ? "bg-destructive/60" :
+                "bg-success/60"
+              }`} />
+              
+              {/* Basis symbol */}
+              <div className={`text-lg font-mono ${
+                qubit.basis === "+" ? "basis-plus" : "basis-cross"
+              }`} />
+              
+              {/* Bit value */}
+              <div className="text-xs font-mono mt-1 text-muted-foreground">
+                {qubit.bit}
+              </div>
+              
+              {/* Current round indicator */}
+              {index === currentRound && isActive && (
+                <motion.div
+                  className="absolute -inset-1 border-2 border-alice rounded-lg"
+                  animate={{ scale: [1, 1.05, 1] }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                />
+              )}
+            </motion.div>
+          ))}
         </div>
         
         {qubits.length > 0 && (
           <div className="text-xs text-muted-foreground space-y-1">
-            <div>Arrows show photon polarization states</div>
-            <div>+ basis: ↑↓ (vertical/horizontal)</div>
-            <div>× basis: ↗↘ (diagonal orientations)</div>
+            <div>Colors: Blue(0+), Yellow(1+), Red(0×), Green(1×)</div>
+            <div>Symbols: + (rectilinear), × (diagonal)</div>
           </div>
         )}
       </CardContent>

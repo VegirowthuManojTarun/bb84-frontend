@@ -390,11 +390,6 @@ export const BB84Simulator = ({
                 )
               );
             }}
-            aliceBasis={state.currentRound < state.aliceData.length ? state.aliceData[state.currentRound]?.basis : "+"}
-            bobBasis={state.currentRound < state.bobBases.length ? state.bobBases[state.currentRound] : "+"}
-            eveBasis={generateRandomBasis()} 
-            eveEnabled={state.mode === "with-eve"}
-            currentRound={state.currentRound}
           />
 
           {/* Bob Panel */}
