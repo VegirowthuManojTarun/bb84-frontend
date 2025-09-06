@@ -74,26 +74,44 @@ export const BobPanel = ({
           </div>
         )}
 
-        {/* Current measurement info */}
-        {bases.length > 0 && currentRound < bases.length && (
-          <div className="p-3 bg-bob/5 border border-bob/20 rounded-lg">
-            <div className="text-sm font-medium text-bob mb-2">
-              Current Measurement (Round {currentRound + 1})
+        {/* All measurements list */}
+        {bases.length > 0 && (
+          <div className="space-y-3">
+            <div className="text-sm font-medium text-bob">
+              Measurements ({measurements.filter(m => m !== null).length}/{bases.length})
             </div>
-            <div className="space-y-2 text-sm">
-              <div>Chosen Basis: <span className="font-mono">
-                {bases[currentRound]} ({bases[currentRound] === "+" ? "Rectilinear" : "Diagonal"})
-              </span></div>
-              {measurements[currentRound] !== null && (
-                <div>Measured Bit: <span className="font-mono">{measurements[currentRound]}</span></div>
-              )}
-              {aliceBases[currentRound] && (
-                <div className={`font-medium ${
-                  basesMatch(currentRound) ? "text-green-600" : "text-red-600"
-                }`}>
-                  {basesMatch(currentRound) ? "✓ Basis Match" : "✗ Basis Mismatch"}
-                </div>
-              )}
+            <div className="grid gap-2 max-h-40 overflow-y-auto">
+              {bases.map((basis, index) => {
+                const isCurrentRound = index === currentRound;
+                const isMeasured = measurements[index] !== null;
+                const isMatching = aliceBases[index] && basesMatch(index);
+                
+                return (
+                  <div
+                    key={index}
+                    className={`p-2 rounded text-xs border ${
+                      isCurrentRound && isActive
+                        ? "bg-bob/10 border-bob/40"
+                        : isMeasured
+                        ? "bg-bob/5 border-bob/20"
+                        : "bg-muted/20 border-muted/40"
+                    }`}
+                  >
+                    <div className="flex justify-between items-center">
+                      <span className="font-mono">
+                        Round {index + 1}: {basis} | {isMeasured ? measurements[index] : "?"}
+                      </span>
+                      <div className="flex items-center gap-2">
+                        {aliceBases[index] && (
+                          <span className={`text-xs ${isMatching ? "text-green-600" : "text-red-600"}`}>
+                            {isMatching ? "✓" : "✗"}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}

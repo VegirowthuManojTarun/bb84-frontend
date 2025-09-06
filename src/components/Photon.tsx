@@ -23,25 +23,30 @@ export const Photon = ({ photon, onAnimationComplete, speed }: PhotonProps) => {
     let ArrowComponent;
     let colorClass;
     let glowColor;
+    let rotation = 0;
 
     // Determine arrow direction based on bit and basis
     if (basis === "+") {
       if (bit === 0) {
-        ArrowComponent = ArrowUp; // ↑ vertical
+        ArrowComponent = ArrowUp; // ↑ vertical (0°)
+        rotation = 0;
         colorClass = "text-alice";
         glowColor = "hsl(var(--alice))";
       } else {
-        ArrowComponent = ArrowRight; // → horizontal  
+        ArrowComponent = ArrowUp; // → horizontal (90°)
+        rotation = 90;
         colorClass = "text-warning";
         glowColor = "hsl(var(--warning))";
       }
     } else {
       if (bit === 0) {
-        ArrowComponent = ArrowUpRight; // ↗ 45°
+        ArrowComponent = ArrowUp; // ↗ 45°
+        rotation = 45;
         colorClass = "text-destructive";
         glowColor = "hsl(var(--destructive))";
       } else {
-        ArrowComponent = ArrowDownRight; // ↘ 135°
+        ArrowComponent = ArrowUp; // ↘ 135°
+        rotation = 135;
         colorClass = "text-success";
         glowColor = "hsl(var(--success))";
       }
@@ -50,8 +55,9 @@ export const Photon = ({ photon, onAnimationComplete, speed }: PhotonProps) => {
     return (
       <motion.div
         className={cn("relative", colorClass)}
+        style={{ transform: `rotate(${rotation}deg)` }}
         animate={{ 
-          rotate: photon.isIntercepted ? [0, 15, -15, 0] : 0,
+          rotate: photon.isIntercepted ? [rotation, rotation + 15, rotation - 15, rotation] : rotation,
           filter: photon.isIntercepted 
             ? [`drop-shadow(0 0 16px ${glowColor}) drop-shadow(0 0 8px ${glowColor})`, `drop-shadow(0 0 20px hsl(var(--destructive))) drop-shadow(0 0 12px hsl(var(--eve)))`, `drop-shadow(0 0 16px ${glowColor}) drop-shadow(0 0 8px ${glowColor})`]
             : `drop-shadow(0 0 12px ${glowColor}) drop-shadow(0 0 6px ${glowColor})`

@@ -28,23 +28,43 @@ export const AlicePanel = ({ qubits, currentRound, isActive }: AlicePanelProps) 
           Quantum State Preparation
         </div>
         
-        {/* Current qubit info */}
-        {qubits.length > 0 && currentRound < qubits.length && (
-          <div className="p-3 bg-alice/5 border border-alice/20 rounded-lg">
-            <div className="text-sm font-medium text-alice mb-2">
-              Current Qubit (Round {currentRound + 1})
+        {/* All qubits list */}
+        {qubits.length > 0 && (
+          <div className="space-y-3">
+            <div className="text-sm font-medium text-alice">
+              Prepared Qubits ({currentRound + (isActive ? 1 : 0)}/{qubits.length})
             </div>
-            <div className="space-y-2 text-sm">
-              <div>Bit Value: <span className="font-mono">{qubits[currentRound]?.bit}</span></div>
-              <div>Basis: <span className="font-mono">
-                {qubits[currentRound]?.basis} ({qubits[currentRound]?.basis === "+" ? "Rectilinear" : "Diagonal"})
-              </span></div>
-              <div>Polarization: <span className="font-mono">
-                {qubits[currentRound]?.basis === "+" 
-                  ? (qubits[currentRound]?.bit === 0 ? "↑ Vertical" : "→ Horizontal")
-                  : (qubits[currentRound]?.bit === 0 ? "↗ 45°" : "↘ 135°")
-                }
-              </span></div>
+            <div className="grid gap-2 max-h-40 overflow-y-auto">
+              {qubits.map((qubit, index) => {
+                const isCurrentRound = index === currentRound;
+                const isPrepared = index < currentRound || (index === currentRound && isActive);
+                
+                return (
+                  <div
+                    key={index}
+                    className={`p-2 rounded text-xs border ${
+                      isCurrentRound && isActive
+                        ? "bg-alice/10 border-alice/40"
+                        : isPrepared
+                        ? "bg-alice/5 border-alice/20"
+                        : "bg-muted/20 border-muted/40"
+                    }`}
+                  >
+                    <div className="flex justify-between items-center">
+                      <span className="font-mono">
+                        Round {index + 1}: {isPrepared ? qubit.bit : "?"} | {isPrepared ? qubit.basis : "?"}
+                      </span>
+                      <span className="text-lg">
+                        {isPrepared ? (
+                          qubit.basis === "+" 
+                            ? (qubit.bit === 0 ? "↑" : "→")
+                            : (qubit.bit === 0 ? "↗" : "↘")
+                        ) : "?"}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
