@@ -20,7 +20,6 @@ import {
   RotateCcw,
   Zap,
   Timer,
-  FastForward,
 } from "lucide-react";
 
 interface ControlPanelProps {
@@ -34,7 +33,6 @@ interface ControlPanelProps {
   onSpeedChange: (speed: "slow" | "normal" | "fast") => void;
   onQubitCountChange: (count: number) => void;
   isProcessing: boolean;
-  onSkipAnimation?: () => void;
 }
 
 export const ControlPanel = ({
@@ -48,14 +46,12 @@ export const ControlPanel = ({
   onSpeedChange,
   onQubitCountChange,
   isProcessing,
-  onSkipAnimation,
 }: ControlPanelProps) => {
   const canPrepare = state.step === "idle";
   const canSend = state.step === "prepared";
   const canCompare =
     state.step === "measuring" && state.currentRound >= state.totalRounds;
   const canGenerateKey = state.step === "comparing";
-  const isAnimating = state.step === "sending" || state.step === "measuring";
 
   return (
     <Card className="glass border-primary/30">
@@ -193,21 +189,6 @@ export const ControlPanel = ({
             Reset
           </Button>
         </div>
-
-        {/* Skip Animation Button */}
-        {isAnimating && onSkipAnimation && (
-          <div className="flex justify-center">
-            <Button
-              onClick={onSkipAnimation}
-              variant="outline"
-              size="sm"
-              className="border-warning/50 text-warning hover:bg-warning/10"
-            >
-              <FastForward className="w-4 h-4 mr-2" />
-              Skip to Results
-            </Button>
-          </div>
-        )}
 
         {/* Progress indicator */}
         {state.step !== "idle" && (

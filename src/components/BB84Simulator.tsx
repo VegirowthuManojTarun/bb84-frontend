@@ -317,49 +317,6 @@ export const BB84Simulator = ({
     addMessage("system", "Protocol reset - ready for new simulation");
   }, [state.mode, state.totalRounds, state.speed, addMessage]);
 
-  const onSkipAnimation = async () => {
-    try {
-      // Stop current animations by clearing photons
-      setPhotons([]);
-      setIsProcessing(true);
-      
-      // If we're in sending phase, move to comparing
-      if (state.step === "sending") {
-        setState(prev => ({ 
-          ...prev, 
-          step: "comparing",
-          currentRound: prev.totalRounds 
-        }));
-        addMessage("system", "Animation skipped → showing final results.");
-        
-        // Auto-proceed to comparison
-        setTimeout(async () => {
-          await onCompareBases();
-        }, 100);
-      } 
-      // If we're in measuring phase, move to comparing  
-      else if (state.step === "measuring") {
-        setState(prev => ({ 
-          ...prev, 
-          step: "comparing",
-          currentRound: prev.totalRounds 
-        }));
-        addMessage("system", "Animation skipped → showing final results.");
-        
-        // Auto-proceed to comparison
-        setTimeout(async () => {
-          await onCompareBases();
-        }, 100);
-      }
-      
-    } catch (error) {
-      console.error("Error skipping animation:", error);
-      addMessage("system", "Error skipping animation. Please try again.");
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -495,7 +452,6 @@ export const BB84Simulator = ({
             setState((prev) => ({ ...prev, totalRounds: count }))
           }
           isProcessing={isProcessing}
-          onSkipAnimation={onSkipAnimation}
         />
 
         {/* Bottom Row: Chat and Results */}
