@@ -1,11 +1,15 @@
 import { motion } from "framer-motion";
-import { PhotonData } from "@/types/bb84";
+import { PhotonData, Basis } from "@/types/bb84";
 import { cn } from "@/lib/utils";
 
 interface PhotonProps {
   photon: PhotonData;
   onAnimationComplete?: () => void;
   speed: "slow" | "normal" | "fast";
+  aliceBasis?: Basis | null;
+  bobBasis?: Basis | null;
+  eveBasis?: Basis | null;
+  eveEnabled?: boolean;
 }
 
 const SPEED_MAP = {
@@ -14,33 +18,47 @@ const SPEED_MAP = {
   fast: 0.4,
 };
 
-export const Photon = ({ photon, onAnimationComplete, speed }: PhotonProps) => {
+export const Photon = ({ 
+  photon, 
+  onAnimationComplete, 
+  speed, 
+  aliceBasis, 
+  bobBasis, 
+  eveBasis, 
+  eveEnabled = false 
+}: PhotonProps) => {
   const { bit, basis } = photon;
   
-  // Get photon shape based on basis
-  const getPhotonShape = () => {
+  // Get photon arrow based on bit and basis
+  const getPhotonArrow = () => {
+    let direction = "";
+    let rotation = 0;
+    
     if (basis === "+") {
-      // Circle for + basis
-      return (
-        <div className={cn(
-          "w-3 h-3 rounded-full shadow-lg",
-          bit === 0 ? "bg-blue-400" : "bg-yellow-400"
-        )} />
-      );
+      direction = bit === 0 ? "↑" : "→";
+      rotation = bit === 0 ? 0 : 90;
     } else {
-      // Diamond for x basis
-      return (
-        <div className={cn(
-          "w-3 h-3 shadow-lg transform rotate-45",
-          bit === 0 ? "bg-red-400" : "bg-green-400"
-        )} />
-      );
+      direction = bit === 0 ? "↗" : "↘";
+      rotation = bit === 0 ? 45 : 135;
     }
+
+    return (
+      <div 
+        className={cn(
+          "text-2xl font-bold select-none leading-none flex items-center justify-center",
+          "drop-shadow-lg filter",
+          basis === "+" ? (bit === 0 ? "text-blue-400" : "text-yellow-400") : (bit === 0 ? "text-red-400" : "text-green-400")
+        )}
+        style={{ transform: `rotate(${rotation}deg)` }}
+      >
+        {direction}
+      </div>
+    );
   };
 
   return (
     <motion.div
-      className="absolute"
+      className="absolute w-8 h-8 flex items-center justify-center"
       initial={{ 
         x: "0%", 
         opacity: 0, 
@@ -51,7 +69,6 @@ export const Photon = ({ photon, onAnimationComplete, speed }: PhotonProps) => {
         x: "100%", 
         opacity: 1, 
         scale: 1,
-        backgroundColor: photon.isIntercepted ? "#ef4444" : undefined
       }}
       transition={{
         x: {
@@ -60,11 +77,6 @@ export const Photon = ({ photon, onAnimationComplete, speed }: PhotonProps) => {
         },
         opacity: { duration: 0.2 },
         scale: { duration: 0.2 },
-        backgroundColor: photon.isIntercepted ? {
-          duration: 0.2,
-          repeat: 2,
-          repeatType: "reverse"
-        } : {}
       }}
       onAnimationComplete={onAnimationComplete}
       style={{
@@ -73,14 +85,35 @@ export const Photon = ({ photon, onAnimationComplete, speed }: PhotonProps) => {
         right: 0
       }}
     >
-      {getPhotonShape()}
-      {/* Photon tail effect */}
+      {/* Main photon arrow with glow effect */}
+      <motion.div
+        className="relative"
+        animate={{
+          filter: photon.isIntercepted 
+            ? ["drop-shadow(0 0 8px #ef4444)", "drop-shadow(0 0 4px #ef4444)", "drop-shadow(0 0 8px #ef4444)"]
+            : "drop-shadow(0 0 4px currentColor)"
+        }}
+        transition={{
+          filter: photon.isIntercepted ? {
+            duration: 0.3,
+            repeat: 2,
+            repeatType: "reverse"
+          } : {}
+        }}
+      >
+        {getPhotonArrow()}
+      </motion.div>
+
+      {/* Photon trail effect */}
       <motion.div
         className={cn(
-          "absolute inset-0 w-8 h-1 -left-6 top-1/2 -translate-y-1/2 opacity-50 blur-sm rounded-full",
+          "absolute w-12 h-1 -left-8 top-1/2 -translate-y-1/2 opacity-40 blur-sm rounded-full",
           basis === "+" ? (bit === 0 ? "bg-blue-400" : "bg-yellow-400") : (bit === 0 ? "bg-red-400" : "bg-green-400")
         )}
-        animate={{ scaleX: [0.5, 1, 0.5] }}
+        animate={{ 
+          scaleX: [0.3, 1, 0.3],
+          opacity: [0.2, 0.6, 0.2]
+        }}
         transition={{ duration: 0.8, repeat: Infinity }}
       />
     </motion.div>

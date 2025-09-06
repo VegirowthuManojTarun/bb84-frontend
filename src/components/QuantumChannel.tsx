@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
-import { PhotonData } from "@/types/bb84";
+import { PhotonData, Basis } from "@/types/bb84";
 import { Photon } from "./Photon";
+import { PolarizerSlit } from "./PolarizerSlit";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Zap } from "lucide-react";
 
@@ -9,13 +10,23 @@ interface QuantumChannelProps {
   isActive: boolean;
   speed: "slow" | "normal" | "fast";
   onPhotonComplete?: (photonId: string) => void;
+  aliceBasis?: Basis | null;
+  bobBasis?: Basis | null;
+  eveBasis?: Basis | null;
+  eveEnabled?: boolean;
+  currentRound: number;
 }
 
 export const QuantumChannel = ({ 
   photons, 
   isActive, 
   speed, 
-  onPhotonComplete 
+  onPhotonComplete,
+  aliceBasis,
+  bobBasis,
+  eveBasis,
+  eveEnabled = false,
+  currentRound
 }: QuantumChannelProps) => {
   return (
     <Card className="h-full">
@@ -45,6 +56,32 @@ export const QuantumChannel = ({
               ))}
             </div>
           </div>
+
+          {/* Alice's Polarizer Slit */}
+          <PolarizerSlit
+            basis={aliceBasis}
+            position="alice"
+            isActive={isActive}
+            className="absolute left-4 top-1/2 -translate-y-1/2"
+          />
+
+          {/* Bob's Polarizer Slit */}
+          <PolarizerSlit
+            basis={bobBasis}
+            position="bob"
+            isActive={isActive}
+            className="absolute right-4 top-1/2 -translate-y-1/2"
+          />
+
+          {/* Eve's Polarizer Slit (if enabled) */}
+          {eveEnabled && (
+            <PolarizerSlit
+              basis={eveBasis}
+              position="eve"
+              isActive={isActive}
+              className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2"
+            />
+          )}
           
           {/* Photons */}
           <div className="absolute inset-0 w-full h-full">
@@ -56,6 +93,10 @@ export const QuantumChannel = ({
                   photon={photon}
                   speed={speed}
                   onAnimationComplete={() => onPhotonComplete?.(photon.id)}
+                  aliceBasis={aliceBasis}
+                  bobBasis={bobBasis}
+                  eveBasis={eveBasis}
+                  eveEnabled={eveEnabled}
                 />
               ))}
           </div>

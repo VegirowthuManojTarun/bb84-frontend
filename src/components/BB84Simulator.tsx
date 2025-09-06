@@ -56,6 +56,7 @@ export const BB84Simulator = ({
   const [chatCollapsed, setChatCollapsed] = useState(false);
   const [eveInterceptionRate, setEveInterceptionRate] = useState(0.5);
   const [errorHistory, setErrorHistory] = useState<number[]>([]);
+  const [eveCurrentBasis, setEveCurrentBasis] = useState<Basis | null>(null);
 
   const addMessage = useCallback(
     (sender: ChatMessage["sender"], message: string, round?: number) => {
@@ -171,9 +172,13 @@ export const BB84Simulator = ({
         eveInterceptions[i] = shouldIntercept;
 
         if (shouldIntercept) {
+          const eveBasis = Math.random() < 0.5 ? "+" : "x";
+          setEveCurrentBasis(eveBasis);
           await BB84Api.eveIntercept(i);
           photon.isIntercepted = true;
           addMessage("eve", `Intercepted and measured qubit ${i + 1}`, i);
+        } else {
+          setEveCurrentBasis(null);
         }
 
         const bobResponse = await BB84Api.bobMeasure(i, { basis: bobBasis });
@@ -390,6 +395,11 @@ export const BB84Simulator = ({
                 )
               );
             }}
+            aliceBasis={state.aliceData[state.currentRound]?.basis || null}
+            bobBasis={state.bobBases[state.currentRound] || null}
+            eveBasis={eveCurrentBasis}
+            eveEnabled={state.mode === "with-eve"}
+            currentRound={state.currentRound}
           />
 
           {/* Bob Panel */}
