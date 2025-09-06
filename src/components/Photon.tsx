@@ -53,8 +53,8 @@ export const Photon = ({ photon, onAnimationComplete, speed }: PhotonProps) => {
         animate={{ 
           rotate: photon.isIntercepted ? [0, 15, -15, 0] : 0,
           filter: photon.isIntercepted 
-            ? [`drop-shadow(0 0 8px ${glowColor})`, `drop-shadow(0 0 12px hsl(var(--eve)))`, `drop-shadow(0 0 8px ${glowColor})`]
-            : `drop-shadow(0 0 6px ${glowColor})`
+            ? [`drop-shadow(0 0 16px ${glowColor}) drop-shadow(0 0 8px ${glowColor})`, `drop-shadow(0 0 20px hsl(var(--destructive))) drop-shadow(0 0 12px hsl(var(--eve)))`, `drop-shadow(0 0 16px ${glowColor}) drop-shadow(0 0 8px ${glowColor})`]
+            : `drop-shadow(0 0 12px ${glowColor}) drop-shadow(0 0 6px ${glowColor})`
         }}
         transition={{ 
           rotate: photon.isIntercepted ? { duration: 0.3, repeat: 2 } : {},
@@ -62,8 +62,11 @@ export const Photon = ({ photon, onAnimationComplete, speed }: PhotonProps) => {
         }}
       >
         <ArrowComponent 
-          className="w-4 h-4" 
-          strokeWidth={2.5}
+          className="w-8 h-8 md:w-10 md:h-10" 
+          strokeWidth={3}
+          style={{
+            filter: `drop-shadow(0 0 8px ${glowColor}) drop-shadow(0 0 4px ${glowColor})`
+          }}
         />
       </motion.div>
     );
