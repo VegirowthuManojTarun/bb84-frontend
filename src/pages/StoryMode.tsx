@@ -16,7 +16,8 @@ import {
   Shield,
   Eye,
   Zap,
-  CheckCircle
+  CheckCircle,
+  ArrowRight
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
@@ -227,38 +228,374 @@ export const StoryMode = () => {
           </div>
         );
 
-      case "symmetric":
+      case "asymmetric":
         return (
-          <div className="relative w-full h-96 flex items-center justify-center">
-            <motion.div 
-              className="flex items-center space-x-8"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8 }}
-            >
-              {/* Alice with key */}
-              <div className="flex flex-col items-center space-y-2">
+          <div className="relative w-full h-96">
+            <div className="flex items-center justify-between px-8 h-full">
+              {/* Alice */}
+              <div className="flex flex-col items-center space-y-4">
                 <div className="w-16 h-16 bg-alice rounded-full flex items-center justify-center">
-                  <Key className="w-8 h-8 text-white" />
+                  <Users className="w-8 h-8 text-white" />
                 </div>
                 <span className="text-alice font-semibold">Alice</span>
               </div>
 
-              {/* Shared lock */}
-              <motion.div
-                className="p-4 bg-muted rounded-lg border"
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                <Lock className="w-12 h-12 text-primary" />
-              </motion.div>
+              {/* Asymmetric key system */}
+              <div className="flex-1 relative mx-8 flex flex-col items-center space-y-4">
+                {/* Public key (mailbox) */}
+                <motion.div
+                  className="flex items-center space-x-4"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8 }}
+                >
+                  <div className="text-center">
+                    <div className="w-16 h-12 bg-bob/20 border-2 border-bob rounded-lg flex items-center justify-center mb-2">
+                      <Lock className="w-6 h-6 text-bob" />
+                    </div>
+                    <span className="text-xs text-muted-foreground">Public Key</span>
+                  </div>
+                  
+                  <motion.div
+                    className="w-8 h-px bg-primary"
+                    animate={{ scaleX: [0, 1] }}
+                    transition={{ duration: 1, delay: 0.5 }}
+                  />
+                  
+                  <div className="text-center">
+                    <div className="w-16 h-12 bg-bob border-2 border-bob rounded-lg flex items-center justify-center mb-2">
+                      <Key className="w-6 h-6 text-white" />
+                    </div>
+                    <span className="text-xs text-muted-foreground">Private Key</span>
+                  </div>
+                </motion.div>
 
-              {/* Bob with key */}
-              <div className="flex flex-col items-center space-y-2">
+                {/* Encrypted message flow */}
+                <motion.div
+                  className="flex items-center space-x-2"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1 }}
+                >
+                  <div className="px-3 py-1 bg-alice/20 border border-alice rounded text-xs">Message</div>
+                  <ArrowRight className="w-4 h-4 text-muted-foreground" />
+                  <div className="px-3 py-1 bg-primary/20 border border-primary rounded text-xs">🔒 Encrypted</div>
+                  <ArrowRight className="w-4 h-4 text-muted-foreground" />
+                  <div className="px-3 py-1 bg-bob/20 border border-bob rounded text-xs">Decrypted</div>
+                </motion.div>
+
+                {/* Quantum threat warning */}
+                <motion.div
+                  className="mt-4 px-4 py-2 bg-destructive/20 border border-destructive rounded-lg text-center"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 1.5 }}
+                >
+                  <div className="text-destructive text-sm font-semibold">⚠️ Quantum Threat</div>
+                  <div className="text-xs text-muted-foreground">Future quantum computers can break this</div>
+                </motion.div>
+              </div>
+
+              {/* Bob */}
+              <div className="flex flex-col items-center space-y-4">
                 <div className="w-16 h-16 bg-bob rounded-full flex items-center justify-center">
-                  <Key className="w-8 h-8 text-white" />
+                  <Users className="w-8 h-8 text-white" />
                 </div>
                 <span className="text-bob font-semibold">Bob</span>
+              </div>
+            </div>
+          </div>
+        );
+
+      case "eve-interception":
+        return (
+          <div className="relative w-full h-96">
+            {/* Quantum channel */}
+            <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-2 bg-gradient-to-r from-primary/30 via-primary to-primary/30 rounded-full" />
+
+            <div className="flex items-center justify-between px-8 h-full">
+              {/* Alice */}
+              <div className="flex flex-col items-center space-y-2">
+                <div className="w-16 h-16 bg-alice rounded-full flex items-center justify-center">
+                  <Zap className="w-8 h-8 text-white" />
+                </div>
+                <span className="text-alice font-semibold">Alice</span>
+                <div className="w-8 h-12 bg-muted border-2 border-alice rounded-sm flex items-center justify-center">
+                  <div className="w-6 h-0.5 bg-alice rounded-full" />
+                </div>
+              </div>
+
+              {/* Eve in the middle */}
+              <div className="flex flex-col items-center space-y-2">
+                <motion.div 
+                  className="w-16 h-16 bg-eve rounded-full flex items-center justify-center"
+                  animate={{ 
+                    boxShadow: ["0 0 0px hsl(var(--destructive))", "0 0 20px hsl(var(--destructive))", "0 0 0px hsl(var(--destructive))"] 
+                  }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                >
+                  <Eye className="w-8 h-8 text-white" />
+                </motion.div>
+                <span className="text-eve font-semibold">Eve</span>
+                <motion.div 
+                  className="w-8 h-12 bg-muted border-2 border-eve rounded-sm flex items-center justify-center"
+                  animate={{ rotate: [0, 45, 0, -45, 0] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  <div className="w-6 h-0.5 bg-eve rounded-full" />
+                </motion.div>
+              </div>
+
+              {/* Bob */}
+              <div className="flex flex-col items-center space-y-2">
+                <div className="w-16 h-16 bg-bob rounded-full flex items-center justify-center">
+                  <Shield className="w-8 h-8 text-white" />
+                </div>
+                <span className="text-bob font-semibold">Bob</span>
+                <div className="w-8 h-12 bg-muted border-2 border-bob rounded-sm flex items-center justify-center">
+                  <motion.div 
+                    className="w-6 h-0.5 bg-bob rounded-full"
+                    animate={{ rotate: [0, 90, 0] }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Disturbed photon animation */}
+            {eveEnabled && isPlaying && (
+              <motion.div
+                className="absolute top-1/2 -translate-y-1/2 left-8 text-3xl font-bold"
+                initial={{ x: 0, opacity: 0 }}
+                animate={{ 
+                  x: [0, "25%", "50%", "75%", "100%"], 
+                  opacity: [0, 1, 1, 1, 0],
+                  rotate: [0, 0, 180, 180, 360],
+                  scale: [0.8, 1, 0.8, 1, 0.8]
+                }}
+                transition={{ 
+                  duration: 4,
+                  ease: "linear"
+                }}
+              >
+                <motion.span 
+                  className="text-red-400"
+                  animate={{ 
+                    color: ["#f87171", "#fbbf24", "#f87171"] 
+                  }}
+                  transition={{ duration: 0.5, repeat: Infinity }}
+                >
+                  ↗
+                </motion.span>
+              </motion.div>
+            )}
+
+            {/* Disturbance indicator */}
+            <motion.div 
+              className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 bg-destructive/20 border border-destructive rounded-lg text-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1 }}
+            >
+              <div className="text-destructive text-sm font-semibold">Quantum State Disturbed</div>
+              <div className="text-xs text-muted-foreground">Eve's measurement changes the photon</div>
+            </motion.div>
+          </div>
+        );
+
+      case "bob-measures":
+        return (
+          <div className="relative w-full h-96">
+            {/* Quantum channel */}
+            <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-2 bg-gradient-to-r from-primary/30 via-primary to-primary/30 rounded-full" />
+
+            <div className="flex items-center justify-between px-8 h-full">
+              {/* Alice (sending) */}
+              <div className="flex flex-col items-center space-y-4">
+                <div className="w-16 h-16 bg-alice rounded-full flex items-center justify-center">
+                  <Zap className="w-8 h-8 text-white" />
+                </div>
+                <span className="text-alice font-semibold">Alice</span>
+                <div className="text-center space-y-1">
+                  <div className="text-xs text-muted-foreground">Sent:</div>
+                  <div className="font-mono text-sm">↑ (+, 0)</div>
+                </div>
+              </div>
+
+              {/* Photon traveling */}
+              <div className="flex-1 relative mx-8">
+                {isPlaying && (
+                  <motion.div
+                    className="absolute top-1/2 -translate-y-1/2 left-0 text-3xl font-bold"
+                    initial={{ x: 0, opacity: 0, scale: 0.8 }}
+                    animate={{ 
+                      x: [0, "100%"], 
+                      opacity: [0, 1, 1, 0],
+                      scale: [0.8, 1, 1, 0.8]
+                    }}
+                    transition={{ 
+                      duration: 3,
+                      ease: "linear"
+                    }}
+                  >
+                    <span className="text-blue-400 drop-shadow-lg">↑</span>
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Bob (measuring) */}
+              <div className="flex flex-col items-center space-y-4">
+                <div className="w-16 h-16 bg-bob rounded-full flex items-center justify-center">
+                  <Shield className="w-8 h-8 text-white" />
+                </div>
+                <span className="text-bob font-semibold">Bob</span>
+                
+                {/* Bob's measurement basis selector */}
+                <div className="space-y-2">
+                  <div className="text-xs text-muted-foreground text-center">Bob's Basis:</div>
+                  <div className="flex space-x-2">
+                    <motion.div 
+                      className="w-8 h-12 bg-muted border-2 border-bob rounded-sm flex items-center justify-center cursor-pointer"
+                      whileHover={{ scale: 1.1 }}
+                      animate={{ borderColor: ["hsl(var(--bob))", "hsl(var(--primary))", "hsl(var(--bob))"] }}
+                      transition={{ duration: 1, repeat: Infinity }}
+                    >
+                      <div className="w-6 h-0.5 bg-bob rounded-full" />
+                    </motion.div>
+                    <div className="text-xs text-center pt-4">OR</div>
+                    <motion.div 
+                      className="w-8 h-12 bg-muted border-2 border-muted-foreground rounded-sm flex items-center justify-center opacity-50"
+                      style={{ transform: "rotate(45deg)" }}
+                    >
+                      <div className="w-6 h-0.5 bg-muted-foreground rounded-full" />
+                    </motion.div>
+                  </div>
+                </div>
+
+                <motion.div 
+                  className="text-center space-y-1"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 2 }}
+                >
+                  <div className="text-xs text-muted-foreground">Measured:</div>
+                  <div className="font-mono text-sm text-success">✓ 0 (Match!)</div>
+                </motion.div>
+              </div>
+            </div>
+
+            {/* Measurement outcome explanation */}
+            <motion.div 
+              className="absolute bottom-4 left-1/2 -translate-x-1/2 max-w-md text-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.5 }}
+            >
+              <div className="px-4 py-2 bg-success/20 border border-success rounded-lg">
+                <div className="text-success text-sm font-semibold">Basis Match = Correct Measurement</div>
+                <div className="text-xs text-muted-foreground">When Bob uses the same basis as Alice, he gets the correct bit</div>
+              </div>
+            </motion.div>
+          </div>
+        );
+
+      case "error-detection":
+        return (
+          <div className="relative w-full h-96 flex flex-col items-center justify-center space-y-8">
+            {/* Error rate comparison */}
+            <div className="grid grid-cols-2 gap-8 w-full max-w-4xl">
+              {/* Without Eve */}
+              <motion.div 
+                className="text-center space-y-4"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8 }}
+              >
+                <h3 className="text-lg font-semibold text-success">Without Eve</h3>
+                <div className="space-y-2">
+                  <div className="text-sm text-muted-foreground">Error Rate:</div>
+                  <motion.div 
+                    className="text-3xl font-bold text-success"
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    ~5%
+                  </motion.div>
+                  <div className="text-xs text-muted-foreground">Natural quantum noise</div>
+                </div>
+                
+                {/* Visual representation */}
+                <div className="grid grid-cols-5 gap-1 max-w-24 mx-auto">
+                  {Array.from({ length: 20 }).map((_, i) => (
+                    <motion.div
+                      key={i}
+                      className={`w-3 h-3 rounded-full ${i < 19 ? 'bg-success' : 'bg-muted'}`}
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: i * 0.05 }}
+                    />
+                  ))}
+                </div>
+                
+                <div className="px-3 py-2 bg-success/20 border border-success rounded-lg">
+                  <div className="text-success text-sm font-semibold">✓ Channel is Secure</div>
+                  <div className="text-xs text-muted-foreground">Proceed with key generation</div>
+                </div>
+              </motion.div>
+
+              {/* With Eve */}
+              <motion.div 
+                className="text-center space-y-4"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+              >
+                <h3 className="text-lg font-semibold text-destructive">With Eve</h3>
+                <div className="space-y-2">
+                  <div className="text-sm text-muted-foreground">Error Rate:</div>
+                  <motion.div 
+                    className="text-3xl font-bold text-destructive"
+                    animate={{ 
+                      scale: [1, 1.2, 1],
+                      textShadow: ["0 0 0px hsl(var(--destructive))", "0 0 10px hsl(var(--destructive))", "0 0 0px hsl(var(--destructive))"]
+                    }}
+                    transition={{ duration: 1, repeat: Infinity }}
+                  >
+                    ~25%
+                  </motion.div>
+                  <div className="text-xs text-muted-foreground">Eve's interference detected!</div>
+                </div>
+                
+                {/* Visual representation */}
+                <div className="grid grid-cols-5 gap-1 max-w-24 mx-auto">
+                  {Array.from({ length: 20 }).map((_, i) => (
+                    <motion.div
+                      key={i}
+                      className={`w-3 h-3 rounded-full ${i % 4 === 0 ? 'bg-destructive' : 'bg-success'}`}
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: i * 0.05 }}
+                    />
+                  ))}
+                </div>
+                
+                <div className="px-3 py-2 bg-destructive/20 border border-destructive rounded-lg">
+                  <div className="text-destructive text-sm font-semibold">⚠️ Eavesdropping Detected</div>
+                  <div className="text-xs text-muted-foreground">Abort and try new channel</div>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Detection principle */}
+            <motion.div 
+              className="max-w-2xl text-center px-4 py-3 bg-primary/10 border border-primary/30 rounded-lg"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1 }}
+            >
+              <div className="text-primary text-sm font-semibold">Quantum Detection Principle</div>
+              <div className="text-xs text-muted-foreground leading-relaxed mt-1">
+                Eve's measurements disturb quantum states, causing Alice and Bob to see more errors than natural quantum noise would produce.
               </div>
             </motion.div>
           </div>
