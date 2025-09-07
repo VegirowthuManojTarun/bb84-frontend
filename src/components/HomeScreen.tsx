@@ -12,14 +12,18 @@ import {
   ArrowRight, 
   Play,
   Lock,
-  Users
+  Users,
+  BookOpen
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface HomeScreenProps {
   onStartSimulation: (mode: "without-eve" | "with-eve") => void;
 }
 
 export const HomeScreen = ({ onStartSimulation }: HomeScreenProps) => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -129,12 +133,51 @@ export const HomeScreen = ({ onStartSimulation }: HomeScreenProps) => {
             </Card>
           </motion.div>
 
+          {/* Story Mode Button */}
+          <motion.div 
+            className="text-center max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.8 }}
+          >
+            <Card className="glass border-primary/30 hover:border-primary/50 transition-colors cursor-pointer group">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-primary justify-center">
+                  <BookOpen className="w-6 h-6" />
+                  Interactive Story Mode
+                  <Badge variant="outline" className="ml-2 border-primary/50 text-primary">
+                    Educational
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-muted-foreground">
+                  Learn the fundamentals of quantum cryptography through an animated, step-by-step story. 
+                  Perfect for understanding the BB84 protocol concepts before diving into the simulation.
+                </p>
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  <li>• Animated explanation of quantum principles</li>
+                  <li>• Visual representation of Alice, Bob, and Eve</li>
+                  <li>• Interactive controls and scene navigation</li>
+                </ul>
+                <Button 
+                  className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                  onClick={() => navigate("/story")}
+                >
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  Start Story Mode
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </CardContent>
+            </Card>
+          </motion.div>
+
           {/* Simulation Mode Selection */}
           <motion.div 
             className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.8 }}
+            transition={{ delay: 0.8, duration: 0.8 }}
           >
             {/* Secure Mode */}
             <Card className="glass border-success/30 hover:border-success/50 transition-colors cursor-pointer group">

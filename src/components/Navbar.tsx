@@ -1,8 +1,13 @@
 import { motion } from "framer-motion";
 import { ThemeToggle } from "./ThemeToggle";
-import { Atom } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Atom, BookOpen, Home } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export const Navbar = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   return (
     <motion.nav 
       className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border"
@@ -14,9 +19,16 @@ export const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo and Title */}
           <div className="flex items-center space-x-3">
-            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-primary-glow">
-              <Atom className="w-6 h-6 text-primary-foreground" />
-            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate("/")}
+              className="p-2"
+            >
+              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-primary-glow">
+                <Atom className="w-6 h-6 text-primary-foreground" />
+              </div>
+            </Button>
             <div className="flex flex-col">
               <h1 className="text-lg font-bold text-foreground">
                 QKD Demonstration Simulator
@@ -27,12 +39,26 @@ export const Navbar = () => {
             </div>
           </div>
 
-          {/* Problem Statement - Hidden on mobile */}
-          <div className="hidden lg:block max-w-md">
-            <p className="text-sm text-muted-foreground text-center">
-              <span className="font-medium text-foreground">Challenge:</span> Develop a basic simulator for Quantum Key Distribution 
-              (BB84 Protocol) to show secure communication using quantum principles
-            </p>
+          {/* Navigation */}
+          <div className="hidden md:flex items-center space-x-2">
+            <Button
+              variant={location.pathname === "/" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => navigate("/")}
+              className="gap-2"
+            >
+              <Home className="w-4 h-4" />
+              Home
+            </Button>
+            <Button
+              variant={location.pathname === "/story" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => navigate("/story")}
+              className="gap-2"
+            >
+              <BookOpen className="w-4 h-4" />
+              Story Mode
+            </Button>
           </div>
 
           {/* Theme Toggle */}
